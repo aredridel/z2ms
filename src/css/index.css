@@ -1,0 +1,22 @@
+@import "./__reset.css";
+
+:root {
+	--grid-base: 8px;
+	font-size: calc(var(--grid-base) * 2);
+}
+
+.navbar {
+	list-style: none;
+	padding: 0;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	max-width: 100%;
+	gap: 1rem;
+}
+.navbar>* {
+	padding: 0;
+	list-style: none;
+	flex-grow: 0;
+	flex-shrink: 1;
+}
