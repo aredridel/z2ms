@@ -1,14 +1,6 @@
 <script lang="ts">
-	import { websocket } from '$lib/websocket';
-	import { readable } from 'svelte/store';
-	import { browser } from '$app/env';
-
-	const socket = browser ? websocket('ws://homeassistant.local:8099/api') : readable({});
+	import { state } from '$lib/connection';
 
 	let c = 0;
-	$: if (c++ < 100) console.log($socket);
+	$: if (c++ < 100) console.log($state);
 </script>
-
-{#if browser}
-	Hello
-{/if}
