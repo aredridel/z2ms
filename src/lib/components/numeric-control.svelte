@@ -2,19 +2,28 @@
 	import { valueForService, type MQTTStore } from '$lib/websocket';
 
 	import type { Device, NumericFeature } from '$types/z2m';
-	import { get, readable, type Updater, type Writable } from 'svelte/store';
 	import Presets from './presets.svelte';
+
+	import { damper } from '$lib/damper';
 
 	export let feature: NumericFeature;
 	export let device: Device;
 	export let state: MQTTStore;
 
 	$: value = valueForService(state, device, feature);
+	$: dampedValue = damper(value);
 </script>
 
 {#if feature.value_min != null && feature.value_max != null}
 	<label>
-		<input type="range" bind:value={$value} min={feature.value_min} max={feature.value_max} />
+		<input
+			type="range"
+			bind:value={$dampedValue}
+			min={feature.value_min}
+			max={feature.value_max}
+			on:mousedown={dampedValue.hold}
+			on:mouseup={dampedValue.release}
+		/>
 		{feature.name}
 	</label>
 {:else}
