@@ -55,9 +55,14 @@ export function websocket(url: string): MQTTStore {
 	);
 }
 
+const EMPTY = Symbol('empty');
 export function valueAt(store: Readable<Record<string, any>>, path: string): Readable<any> {
-	return derived(store, (store) => {
-		return store[path];
+	let last = EMPTY;
+	return derived(store, (store, set) => {
+		if (store[path] != last) {
+			last = store[path];
+			set(store[path]);
+		}
 	});
 }
 
