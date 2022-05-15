@@ -1,18 +1,47 @@
 import { get, readable, type Updater, type Writable } from 'svelte/store';
 
-export function damper<T>(
-	store: Writable<T>
-): Writable<T> & { hold: () => void; release: () => void } {
+export type DampedStore<T> = Writable<T> & {
+	hold: () => void;
+	release: () => void;
+	timeout: number | undefined;
+};
+
+const EMPTY = Symbol('empty');
+
+export function damper<T>(store: Writable<T>, timeout?: number): DampedStore<T> {
 	let held = false;
 	let set_: (val: T) => void;
-	let value: T;
+	let value: T | typeof EMPTY = EMPTY;
+
+	const methods = {
+		set(val: T) {
+			return store.set(val);
+		},
+		update(fn: Updater<T>) {
+			return store.update(fn);
+		},
+		hold,
+		release,
+		timeout
+	};
+
+	function hold() {
+		held = true;
+	}
+	async function release() {
+		held = false;
+		if (methods.timeout != null) await delay(methods.timeout);
+		if (set_ && value != EMPTY) set_(value);
+	}
 	return Object.assign(
 		readable(get(store), (set: (val: T) => void) => {
 			set_ = set;
 			const stop = store.subscribe((val: T) => {
-				value = val;
 				if (!held) {
-					set(value);
+					value = EMPTY;
+					set(val);
+				} else {
+					value = val;
 				}
 			});
 			return () => {
@@ -20,20 +49,50 @@ export function damper<T>(
 				held = true;
 			};
 		}),
-		{
-			set(val: T) {
-				return store.set(val);
-			},
-			update(fn: Updater<T>) {
-				return store.update(fn);
-			},
-			hold() {
-				held = true;
-			},
-			release() {
-				held = false;
-				if (set_) set_(value);
-			}
-		}
+		methods
 	);
+}
+export function damperAction<T>(
+	el: HTMLElement,
+	{
+		store = undefined,
+		timeout = undefined
+	}: { store: DampedStore<T> | undefined; timeout: number | undefined }
+) {
+	setup();
+
+	return {
+		destroy,
+		update({
+			store: store_ = undefined,
+			timeout: timeout_ = undefined
+		}: {
+			store: DampedStore<T> | undefined;
+			timeout: number | undefined;
+		}) {
+			if (timeout_ != null) timeout = timeout_;
+			destroy();
+			store = store_;
+			setup();
+		}
+	};
+
+	function setup() {
+		if (store) {
+			store.timeout = timeout;
+			el.addEventListener('mousedown', store.hold);
+			el.addEventListener('mouseup', store.release);
+		}
+	}
+	function destroy() {
+		if (store) {
+			store.release();
+			el.removeEventListener('mousedown', store.hold);
+			el.removeEventListener('mouseup', store.release);
+		}
+	}
+}
+
+function delay(ms: number) {
+	return new Promise((accept) => setTimeout(accept, ms));
 }

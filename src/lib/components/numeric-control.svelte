@@ -4,7 +4,7 @@
 	import type { Device, NumericFeature } from '$types/z2m';
 	import Presets from './presets.svelte';
 
-	import { damper } from '$lib/damper';
+	import { damper, damperAction } from '$lib/damper';
 
 	export let feature: NumericFeature;
 	export let device: Device;
@@ -21,8 +21,7 @@
 			bind:value={$dampedValue}
 			min={feature.value_min}
 			max={feature.value_max}
-			on:mousedown={dampedValue.hold}
-			on:mouseup={dampedValue.release}
+			use:damperAction={{ store: dampedValue, timeout: 250 }}
 		/>
 		{feature.name}
 	</label>
