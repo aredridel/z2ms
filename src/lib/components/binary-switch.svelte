@@ -1,16 +1,19 @@
 <script lang="ts">
-	import type { BinarySwitchFeature } from '$types/z2m';
+	import { valueForService, type MQTTStore } from '$lib/websocket';
 
-	import type { Writable } from 'svelte/store';
+	import type { BinarySwitchFeature, Device } from '$types/z2m';
+
 	import Presets from './presets.svelte';
-	export let value: Writable<boolean>;
 	export let feature: BinarySwitchFeature;
-	export let name: string;
+	export let state: MQTTStore;
+	export let device: Device;
+
+	$: value = valueForService(state, device, feature);
 </script>
 
 <label>
 	<input type="checkbox" bind:checked={$value} />
-	{name}
+	{feature.name}
 </label>
 
 <Presets {feature} bind:value={$value} />

@@ -6,7 +6,8 @@ import type {
 	Feature,
 	BinarySwitchFeature,
 	NumericFeature,
-	FeatureWithReturnTypes
+	EnumFeature,
+	LightFeature
 } from '$types/z2m';
 
 interface MQTTMessage {
@@ -14,7 +15,7 @@ interface MQTTMessage {
 	payload: any;
 }
 
-export type MQTTStore = Readable<Record<string, any>> & { send(message: MQTTMessage): void };
+export type MQTTStore = Readable<FeatureValues> & { send(message: MQTTMessage): void };
 
 export function websocket(url: string): MQTTStore {
 	let ws: WebSocket | null = null;
@@ -61,7 +62,7 @@ export function valueAt(store: Readable<Record<string, any>>, path: string): Rea
 }
 
 export function mqttWriteStore(inner: Readable<any>, store: MQTTStore, device: Device) {
-	let last: Record<string, any> = {};
+	let last: FeatureValues = {};
 	return {
 		subscribe(fn: (x: any) => void) {
 			return inner.subscribe((val) => {
@@ -69,10 +70,10 @@ export function mqttWriteStore(inner: Readable<any>, store: MQTTStore, device: D
 				fn(last);
 			});
 		},
-		set(val: Record<string, any>) {
+		set(val: FeatureValues) {
 			store.send({ topic: `${device.friendly_name}/set`, payload: val });
 		},
-		update(fn: Updater<Record<string, any>>) {
+		update(fn: Updater<FeatureValues>) {
 			const val = fn(last);
 			store.send({ topic: `${device.friendly_name}/set`, payload: val });
 		}
@@ -87,32 +88,54 @@ export function isBinaryFeature(x: Feature): x is BinarySwitchFeature {
 	return x.type == 'binary';
 }
 
+export function isEnumFeature(x: Feature): x is EnumFeature {
+	return x.type == 'enum';
+}
+
+export function isLightFeature(x: Feature): x is LightFeature {
+	return x.type == 'light';
+}
+
 type FeatureValues = Record<string, any>;
 
-export function valueForService<T extends FeatureWithReturnTypes>(
+export function valueForService<T extends Feature & { _representation?: any }>(
 	store: MQTTStore,
 	device: Device,
-	feature: T[0]
-): Writable<T[1]> {
+	feature: T
+): Writable<T['_representation']> {
 	const inner = valueAt(store, device.friendly_name);
 	if (isBinaryFeature(feature)) {
-		return bijectiveMapping<FeatureValues, T[1]>(
+		return bijectiveMapping<FeatureValues, T['_representation']>(
 			mqttWriteStore(inner, store, device),
 			(internal: FeatureValues) => internal[feature.property] == feature.value_on,
 			(val): FeatureValues => ({
 				[feature.property]: val ? feature.value_on : feature.value_off
 			})
 		);
-	} else {
-		// if (isNumericFeature(feature)) {
-		return bijectiveMapping<FeatureValues, T[1]>(
+	} else if (isNumericFeature(feature)) {
+		return bijectiveMapping<FeatureValues, T['_representation']>(
 			mqttWriteStore(inner, store, device),
 			(internal: FeatureValues) => Number(internal[feature.property]),
 			(val): FeatureValues => ({ [feature.property]: Number(val) })
 		);
+	} else if (isEnumFeature(feature)) {
+		return bijectiveMapping<FeatureValues, T['_representation']>(
+			mqttWriteStore(inner, store, device),
+			(internal: FeatureValues) => internal[feature.property],
+			(val): FeatureValues => ({ [feature.property]: val })
+		);
+	} else {
+		throw new Error('bug');
 	}
 }
 
 function isMQTTMessage(x: any): x is MQTTMessage {
 	return x && typeof x == 'object' && typeof x.topic == 'string' && 'payload' in x;
+}
+
+export enum FeatureAccessMode {
+	NONE,
+	ACCESS_STATE = 0b001,
+	ACCESS_WRITE = 0b010,
+	ACCESS_READ = 0b100
 }

@@ -1,22 +1,25 @@
 <script lang="ts">
-	import type { NumericFeature } from '$types/z2m';
-	import type { Writable } from 'svelte/store';
+	import { valueForService, type MQTTStore } from '$lib/websocket';
+
+	import type { Device, NumericFeature } from '$types/z2m';
 	import Presets from './presets.svelte';
 
-	export let value: Writable<number>;
-	export let name: string;
 	export let feature: NumericFeature;
+	export let device: Device;
+	export let state: MQTTStore;
+
+	$: value = valueForService(state, device, feature);
 </script>
 
 {#if feature.value_min != null && feature.value_max != null}
 	<label>
 		<input type="range" bind:value={$value} min={feature.value_min} max={feature.value_max} />
-		{name}
+		{feature.name}
 	</label>
 {:else}
 	<label>
 		<input type="number" bind:value={$value} min={feature.value_min} max={feature.value_max} />
-		{name}
+		{feature.name}
 	</label>
 {/if}
 
