@@ -6,6 +6,7 @@
 	import type { Device } from '$types/z2m';
 	import BinarySwitch from '$lib/components/binary-switch.svelte';
 	import NumericControl from '$lib/components/numeric-control.svelte';
+	import { JsonView } from '@zerodevx/svelte-json-view';
 
 	const devices: Readable<Device[]> = valueAt(state, 'bridge/devices');
 
@@ -29,16 +30,17 @@
 								{#if isBinaryFeature(feature)}
 									<BinarySwitch
 										value={valueForService(state, device, feature)}
+										{feature}
 										name={feature.name}
 									/>
 								{:else if isNumericFeature(feature)}
 									<NumericControl
 										value={valueForService(state, device, feature)}
-											feature={feature}
+										{feature}
 										name={feature.name}
 									/>
 								{:else}
-									<pre>{JSON.stringify(feature)}</pre>
+									<JsonView json={feature} />
 								{/if}
 							</li>
 						{/each}
@@ -47,6 +49,6 @@
 			{/if}
 		{/each}
 	</ul>
-	<pre>{JSON.stringify(device.definition, null, 2)}</pre>
-	<pre>{JSON.stringify($device_state, null, 2)}</pre>
+	<JsonView json={device.definition} />
+	<JsonView json={$device_state} />
 {/if}
