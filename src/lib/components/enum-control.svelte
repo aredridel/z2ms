@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { valueForService, type MQTTStore } from '$lib/websocket';
-
 	import type { EnumFeature, Device } from '$types/z2m';
-	import { JsonView } from '@zerodevx/svelte-json-view';
+	import { valueForService, type MQTTStore } from '$lib/websocket';
 
 	export let feature: EnumFeature;
 	export let state: MQTTStore;

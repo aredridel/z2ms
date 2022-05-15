@@ -2,6 +2,7 @@
 	import { valueForService, type MQTTStore } from '$lib/websocket';
 
 	import type { Device, NumericFeature } from '$types/z2m';
+	import { get, readable, type Updater, type Writable } from 'svelte/store';
 	import Presets from './presets.svelte';
 
 	export let feature: NumericFeature;
