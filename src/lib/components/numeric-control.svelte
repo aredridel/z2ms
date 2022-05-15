@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { NumericFeature } from '$types/z2m';
 	import type { Writable } from 'svelte/store';
+	import Presets from './presets.svelte';
 
 	export let value: Writable<number>;
 	export let name: string;
@@ -18,3 +19,5 @@
 		{name}
 	</label>
 {/if}
+
+<Presets {feature} bind:value={$value} />

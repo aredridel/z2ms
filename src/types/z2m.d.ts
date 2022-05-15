@@ -1,6 +1,11 @@
 export interface Feature {
 	name: string;
 	property: string;
+	presets?: Array<{
+		name: string;
+		description: string;
+		value: any;
+	}>;
 	type: string;
 }
 
