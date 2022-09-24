@@ -1,14 +1,16 @@
 import { derived, readable, type Readable, type Updater, type Writable } from 'svelte/store';
-import { browser } from '$app/env';
-import { bijectiveMapping } from './lens';
+import { browser } from '$app/environment';
+import { bijectiveMapping } from './lens.js';
 import type {
 	Device,
-	Feature,
-	BinarySwitchFeature,
-	NumericFeature,
-	EnumFeature,
-	LightFeature
-} from '$types/z2m';
+} from '$lib/device.js';
+
+import {
+	type Feature,
+	isNumericFeature,
+	isBinaryFeature,
+	isEnumFeature
+} from './feature.js';
 
 interface MQTTMessage {
 	topic: string;
@@ -83,22 +85,6 @@ export function mqttWriteStore(inner: Readable<any>, store: MQTTStore, device: D
 			store.send({ topic: `${device.friendly_name}/set`, payload: val });
 		}
 	};
-}
-
-export function isNumericFeature(x: Feature): x is NumericFeature {
-	return x.type == 'numeric';
-}
-
-export function isBinaryFeature(x: Feature): x is BinarySwitchFeature {
-	return x.type == 'binary';
-}
-
-export function isEnumFeature(x: Feature): x is EnumFeature {
-	return x.type == 'enum';
-}
-
-export function isLightFeature(x: Feature): x is LightFeature {
-	return x.type == 'light';
 }
 
 type FeatureValues = Record<string, any>;

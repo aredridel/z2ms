@@ -1,13 +1,16 @@
 <script lang="ts">
-	import type { Device, Feature } from '$types/z2m';
+	import type { Device } from '$lib/device.js';
 	import {
+		type Feature,
 		isEnumFeature,
 		isNumericFeature,
 		isBinaryFeature,
-		isLightFeature,
+		isLightFeature
+	} from "$lib/feature.js";
+	import {
 		type MQTTStore,
 		FeatureAccessMode
-	} from '$lib/websocket';
+	} from '$lib/websocket.js';
 	import BinarySwitch from '$lib/components/binary-switch.svelte';
 	import NumericControl from '$lib/components/numeric-control.svelte';
 	import EnumControl from '$lib/components/enum-control.svelte';
