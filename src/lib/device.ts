@@ -1,4 +1,4 @@
-import type {Feature} from "../lib/feature.ts";
+import type { Feature } from '../lib/feature.ts';
 
 export interface DeviceDefinition {
 	description: string;
@@ -9,4 +9,3 @@ export interface Device {
 	ieee_address: string;
 	definition: DeviceDefinition;
 }
-

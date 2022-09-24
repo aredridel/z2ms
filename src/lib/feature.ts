@@ -58,5 +58,9 @@ export interface NumericFeature extends FeatureBase {
 	}>;
 }
 
-export type Feature = LightFeature | EnumFeature | BinarySwitchFeature | NumericFeature | FeatureBase;
-
+export type Feature =
+	| LightFeature
+	| EnumFeature
+	| BinarySwitchFeature
+	| NumericFeature
+	| FeatureBase;

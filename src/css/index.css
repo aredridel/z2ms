@@ -1,4 +1,4 @@
-@import "./__reset.css";
+@import './__reset.css';
 
 :root {
 	--grid-base: 8px;
@@ -14,7 +14,7 @@
 	max-width: 100%;
 	gap: 1rem;
 }
-.navbar>* {
+.navbar > * {
 	padding: 0;
 	list-style: none;
 	flex-grow: 0;

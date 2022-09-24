@@ -1,16 +1,9 @@
 import { derived, readable, type Readable, type Updater, type Writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { bijectiveMapping } from './lens.js';
-import type {
-	Device,
-} from '$lib/device.js';
+import type { Device } from '$lib/device.js';
 
-import {
-	type Feature,
-	isNumericFeature,
-	isBinaryFeature,
-	isEnumFeature
-} from './feature.js';
+import { type Feature, isNumericFeature, isBinaryFeature, isEnumFeature } from './feature.js';
 
 interface MQTTMessage {
 	topic: string;
