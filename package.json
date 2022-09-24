@@ -31,7 +31,6 @@
   "type": "module",
   "dependencies": {
     "@fontsource/fira-mono": "^4.5.9",
-    "@zerodevx/svelte-json-view": "^0.2.2",
     "sort-by": "^1.2.0"
   }
 }

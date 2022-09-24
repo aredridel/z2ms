@@ -27,6 +27,7 @@ export interface LightFeature extends FeatureBase {
 
 export interface EnumFeature extends FeatureBase {
 	type: 'enum';
+	access: number;
 	_representation?: string;
 	values: string[];
 }

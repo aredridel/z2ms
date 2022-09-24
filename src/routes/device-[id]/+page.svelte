@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { valueAt } from '$lib/websocket';
-	import { state } from '$lib/connection';
+	import { valueAt } from '$lib/websocket.js';
+	import { state } from '$lib/connection.js';
 	import { page } from '$app/stores';
 	import type { Readable } from 'svelte/store';
-	import type { Device } from '$types/z2m';
-	import { JsonView } from '@zerodevx/svelte-json-view';
+	import type { Device } from '$lib/device.js';
 	import FeatureControls from '$lib/components/feature-controls.svelte';
 
 	const devices: Readable<Device[]> = valueAt(state, 'bridge/devices');
@@ -23,6 +22,13 @@
 			<FeatureControls {feature} {device} {state} />
 		{/each}
 	</ul>
-	<JsonView json={device.definition} />
-	<JsonView json={$device_state} />
+
+<details>
+	<summary>Device Definition</summary>
+	<pre>{JSON.stringify(device.definition, null, 2)}</pre>
+</details>
+<details>
+	<summary>Device State</summary>
+	<pre>{JSON.stringify($device_state, null, 2)}</pre>
+</details>
 {/if}

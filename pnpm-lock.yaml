@@ -7,7 +7,6 @@ specifiers:
   '@types/cookie': ^0.5.1
   '@typescript-eslint/eslint-plugin': ^5.27.0
   '@typescript-eslint/parser': ^5.27.0
-  '@zerodevx/svelte-json-view': ^0.2.2
   eslint: ^8.16.0
   eslint-config-prettier: ^8.3.0
   eslint-plugin-svelte3: ^4.0.0
@@ -23,7 +22,6 @@ specifiers:
 
 dependencies:
   '@fontsource/fira-mono': 4.5.9
-  '@zerodevx/svelte-json-view': 0.2.2
   sort-by: 1.2.0
 
 devDependencies:
@@ -440,10 +438,6 @@ packages:
       - encoding
       - supports-color
     dev: true
-
-  /@zerodevx/svelte-json-view/0.2.2:
-    resolution: {integrity: sha512-h3iIMuC85CWzOf3sFyWFqoZLdXQCWvqQxVHIsi6UH0lA6NsKKPeOrYTMYJLYU4w5k3e+uWFqM73k3CV+yZvV0g==}
-    dev: false
 
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
